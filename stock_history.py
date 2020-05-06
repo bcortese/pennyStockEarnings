@@ -8,6 +8,8 @@ import robin_stocks as r
 import pandas as pd
 import csv
 import matplotlib.pyplot as plt
+import os
+import shutil
 
 def login(path):
   with open(path, newline='') as f:
@@ -43,10 +45,13 @@ def currentReturnStatus(bought, sold):
 def main():
     
     login("C://login_files//robinHood_Login.csv")
-
-    data = pd.read_csv("C://login_files//stock_orders_Apr-30-2020.csv")
+    r.export.export_completed_stock_orders("C://stockHistoryFile//")
+    fileName = [filename for filename in os.listdir("C://stockHistoryFile//") if filename.startswith("stock_orders")]
+    fileName = "C://stockHistoryFile//" + fileName[0]
+    print(fileName)
+    data = pd.read_csv(fileName)
     answer = input("Do you want your current stock earnings, including open investments? Yes or no.")
-
+    
     #return stock earnings/spendings including open investments
     if answer.lower() == "yes": 
         #return only sold stocks that were considered a penny stock (under 10 bucks)
@@ -88,13 +93,10 @@ def main():
         dataSold.to_csv(r'C://login_files//sold.csv')    
         
         currentReturnStatus(totalBought, totalSold)
-    
-    
-    
-    
-
-
-
+        
+        
+    shutil.move(fileName, "C://stockHistoryFile//Archive//")
+       
 
 if __name__== "__main__":
    main() 
